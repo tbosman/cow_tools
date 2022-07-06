@@ -46,16 +46,15 @@ async def get_auction_result(auction_id, sem):
     async with sem:
         async with aiohttp.ClientSession() as session:
             req_url = f'https://api.cow.fi/mainnet/api/v1/solver_competition/{auction_id}'
-            try:
-                async with aiohttp.request('get', req_url) as response:
+            async with aiohttp.request('get', req_url) as response:
+                try:
                     # response_text = response.text()
                     await response.text()
                     return response
-            except ConnectionRefusedError as e:
-                logging.info('Connection refused, sleeping for a bit ')
-                await asyncio.sleep(10)
-
-
+                except ConnectionRefusedError as e:
+                    logging.info('Connection refused, sleeping for a bit ')
+                    await asyncio.sleep(10)
+                    return response
 
     #
     # try:
