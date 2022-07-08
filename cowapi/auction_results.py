@@ -15,7 +15,7 @@ logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s',
 
 
 def get_new_ids(start_after):
-    list_url = f'https://gnosis-europe-gpv2-solver.s3.eu-central-1.amazonaws.com/?list-type=2&delimiter=/&prefix=data/prod/2022/07/06/&start-after={start_after}'
+    list_url = f'https://gnosis-europe-gpv2-solver.s3.eu-central-1.amazonaws.com/?list-type=2&delimiter=/&prefix=data/prod/&start-after={start_after}'
 
     response = requests.get(list_url).content
     root = ET.fromstring(response)
