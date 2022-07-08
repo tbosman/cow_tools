@@ -1,5 +1,5 @@
 import aiohttp
-from datetime import datetime
+from datetime import datetime, timedelta
 from xml.etree import ElementTree as ET
 import requests
 import re
@@ -9,15 +9,17 @@ import logging
 import asyncio
 
 logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s',
-                    level=logging.INFO,
+                    level=logging.DEBUG,
                     datefmt="%m-%d %H:%M:%S")
 
 
 
-def get_new_ids(start_after):
-    list_url = f'https://gnosis-europe-gpv2-solver.s3.eu-central-1.amazonaws.com/?list-type=2&delimiter=/&prefix=data/prod/&start-after={start_after}'
+def get_new_ids(start_after, date: datetime):
+
+    list_url = f'https://gnosis-europe-gpv2-solver.s3.eu-central-1.amazonaws.com/?list-type=2&delimiter=/&prefix=data/prod/{date.year:04}/{date.month:02}/{date.day:02}/&start-after={start_after}'
 
     response = requests.get(list_url).content
+    logging.debug(response)
     root = ET.fromstring(response)
 
     prefixes = [el[0].text for el in root if 'CommonPrefixes' in el.tag]
@@ -116,7 +118,12 @@ async def download_all():
     cow_semaphore = asyncio.Semaphore(3)
 
     while True:
-        prefixes = get_new_ids(latest_prefix)
+
+        date_yesterday = datetime.today() - timedelta(days=1)
+        prefixes = get_new_ids(latest_prefix, date_yesterday)
+        prefixes = prefixes if prefixes else get_new_ids(latest_prefix, datetime.today())
+
+
         if prefixes:
             logging.info(f'Retrieved {len(prefixes)} prefixes')
             latest_prefix = sorted(prefixes)[-1]
