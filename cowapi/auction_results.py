@@ -84,7 +84,7 @@ async def download_and_store_auction(prefix, sem):
     global latest_prefix
     (prefix, auction_id, datetime_raw, timestamp) = extract_cols(prefix)
     max_retry = 6
-    sleep_secs = 60
+    sleep_secs = 10
     rate_limit_ctr = 0
     for i in range(max_retry):
         r = await get_auction_result(auction_id, sem)
@@ -93,7 +93,6 @@ async def download_and_store_auction(prefix, sem):
                 logging.info(f'Found result for {auction_id}')
                 store_row(prefix, auction_id, datetime_raw, timestamp, await r.text())
                 break
-
             elif r.status == 429:
                 logging.info(f'Too many requests')
                 time.sleep(1+2**rate_limit_ctr)
@@ -114,7 +113,7 @@ async def download_and_store_auction(prefix, sem):
             logging.info(
                     f'Auction downloader returned none, retrying')
         if i +1 < max_retry:
-            await asyncio.sleep(60)
+            await asyncio.sleep(sleep_secs)
         else:
             logging.info(f'Max retries ({max_retry}) reached, aborting auction {auction_id}.')
 
