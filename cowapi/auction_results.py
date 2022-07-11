@@ -8,7 +8,7 @@ import pandas as pd
 import logging
 import asyncio
 
-logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s',
+logging.basicConfig(format='%(asctime)s %(levelname)s %(line)-6s %(message)s',
                     level=logging.DEBUG,
                     datefmt="%m-%d %H:%M:%S")
 
