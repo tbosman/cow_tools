@@ -82,7 +82,7 @@ def store_row(prefix, auction_id, datetime_raw,timestamp, solutions):
 async def download_and_store_auction(prefix, sem):
     global latest_prefix
     (prefix, auction_id, datetime_raw, timestamp) = extract_cols(prefix)
-    max_retry = 10
+    max_retry = 6
     sleep_secs = 60
     for i in range(max_retry):
         r = await get_auction_result(auction_id, sem)
@@ -91,6 +91,10 @@ async def download_and_store_auction(prefix, sem):
                 logging.info(f'Found result for {auction_id}')
                 store_row(prefix, auction_id, datetime_raw, timestamp, await r.text())
                 break
+
+            elif r.status == 429:
+                logging.info(f'Too many requests')
+                await asyncio.sleep(5+2**i)
             elif r.status == 404:
                 logging.info(f'Auction {auction_id}: 404 result not found')
                 if latest_prefix > prefix:
