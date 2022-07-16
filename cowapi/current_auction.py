@@ -9,6 +9,7 @@ time_str = str(datetime.now().replace(microsecond=0))
 engine = get_postgres_engine()
 
 while True:
+    print('Round')
     auction_json = requests.get(api_url).content
     auction = json.loads(auction_json)
     time_str = str(datetime.now().replace(microsecond=0))
