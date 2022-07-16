@@ -1,4 +1,5 @@
 import json, requests, logging, time
+
 from datetime import datetime
 from util.dbtools import get_postgres_engine
 import pandas as pd
@@ -11,6 +12,7 @@ engine = get_postgres_engine()
 while True:
     print('Round')
     auction_json = requests.get(api_url).content
+    print(auction_json)
     auction = json.loads(auction_json)
     time_str = str(datetime.now().replace(microsecond=0))
     timestamp = time.time()
@@ -20,10 +22,7 @@ while True:
         o['block'] = auction['block']
         o['latestSettlementBlock'] = auction['latestSettlementBlock']
 
-    old_pdf = pd.read_sql('select * from cow.orders', engine)
-
     pdf = pd.DataFrame(orders)
-    pdf = pd.concat([pdf, old_pdf])
 
     pdf.columns = [col.lower() for col in pdf.columns]
 
