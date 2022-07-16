@@ -11,26 +11,6 @@ from requests_auth_aws_sigv4 import AWSSigV4
 from typing import Any
 
 
-# from eth_abi import encode_single, is_encodable
-# from eth_abi.packed import encode_single_packed, is_encodable_packed
-# import time
-# import math
-# import collections.abc
-# import websockets
-# from websockets.legacy.handshake import build_request
-# from websockets.datastructures import Headers
-# # from .signer import aws_auth
-# from typing import (Optional, Sequence, Any)
-# from requests.models import PreparedRequest
-# from requests import Request
-# from web3.providers import WebsocketProvider
-# from base64 import b64encode, b64decode
-# import asyncio
-# from web3.types import (
-#     RPCEndpoint,
-#     RPCResponse,
-# )
-#
 
 from models.batch_auction_model import ApprovalModel
 
