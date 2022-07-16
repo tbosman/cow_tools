@@ -19,7 +19,13 @@ while True:
         o['block'] = auction['block']
         o['latestSettlementBlock'] = auction['latestSettlementBlock']
 
+    old_pdf = pd.read_sql('select * from cow.orders', engine)
+
     pdf = pd.DataFrame(orders)
+    pdf = pd.concat([pdf, old_pdf])
+
+    pdf.columns = [col.lower() for col in pdf.columns]
+
     pdf.to_sql('orders', engine, if_exists='append', schema='cow', index=False)
     print(f'time: {time_str} block: {auction["block"]} | latestSB: {auction["latestSettlementBlock"]} '
           f'hash: {hash(json.dumps(sorted([ (o["validTo"], o) for o in orders ], key=lambda x: x[0])))} norders: {len(auction["orders"])}')
