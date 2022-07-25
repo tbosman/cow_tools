@@ -95,7 +95,7 @@ async def handler(websocket: WebSocketServerProtocol, path: str):
 
 
 async def main(port=8001):
-    logger.info('Setting up server with port %d', port)
+    logger.info(f'Setting up server with port {port}')
     async with websockets.server.serve(
         handler, "", port, ping_interval=10, ping_timeout=20
     ):
