@@ -92,7 +92,7 @@ infuraweb3 = Web3(Web3.HTTPProvider(infura_url, session=session))
 
 def get_abi(contract_address, force_download=False):
     contract_address = Web3.toChecksumAddress(contract_address)
-    local_json = os.path.relpath(f"../contracts/etherscan/{contract_address}.json")
+    local_json = os.path.abspath(f"../contracts/etherscan/{contract_address}.json")
     try:
         assert not force_download, "Forcing download of ABI"
         with open(local_json) as f:
