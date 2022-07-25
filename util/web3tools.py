@@ -9,12 +9,13 @@ from web3 import AsyncHTTPProvider
 from web3.types import Middleware, RPCEndpoint, RPCResponse
 from requests_auth_aws_sigv4 import AWSSigV4
 from typing import Any
+import os
 
 
 
 from cow_tools.models.batch_auction_model import ApprovalModel
 
-with open("cow_tools/config/apikeys.json", "r") as f:
+with open(os.path.expanduser('~') +"/git_tree/cow_tools/config/apikeys.json", "r") as f:
     apikeys = json.load(f)
 
 INFURA_KEY = apikeys["infura"]
@@ -91,7 +92,7 @@ infuraweb3 = Web3(Web3.HTTPProvider(infura_url, session=session))
 
 def get_abi(contract_address, force_download=False):
     contract_address = Web3.toChecksumAddress(contract_address)
-    local_json = f"contracts/etherscan/{contract_address}.json"
+    local_json = os.path.relpath(f"../contracts/etherscan/{contract_address}.json")
     try:
         assert not force_download, "Forcing download of ABI"
         with open(local_json) as f:
