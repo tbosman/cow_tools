@@ -11,7 +11,7 @@ from models.batch_auction_model import SettledBatchAuction
 
 async def sim_client():
     # async with websockets.connect("ws://localhost:8001/", ping_interval=10, ping_timeout=20) as websocket:
-    async with websockets.connect("wss://wintermute.plmsolver.link/", ping_interval=10, ping_timeout=20) as websocket:
+    async with websockets.connect("wss://sim.plmsolver.link", ping_interval=10, ping_timeout=20) as websocket:
         while True:
                 sol = open('/Users/tbosman/git_tree/1inch-solver/service/sol_4202.json', 'r').read()
                 msg = SimulationRequest(SettledBatchAuction.from_json(sol), True).to_json()
