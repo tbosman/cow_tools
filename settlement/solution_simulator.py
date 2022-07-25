@@ -3,15 +3,18 @@
 # gets objective value
 
 import json
+import asyncio
 import web3.exceptions
-from models.batch_auction_model import SettledBatchAuction, Order
-from util.web3tools import get_contract, infuraweb3 as web3
+from ..models.batch_auction_model import SettledBatchAuction, Order
+from ..settlement.datastructures import SimulationRequest
+from ..util.web3tools import get_contract, infuraweb3 as web3
 from eth_abi import encode_abi, encode_single
-from util.defaultlogging import *
-from util.dbtools import get_postgres_engine
+from ..util.defaultlogging import *
+from ..util.dbtools import get_postgres_engine
 import pandas as pd
 from datetime import datetime
 from functools import lru_cache
+import websockets
 
 
 GPV2_CONTRACT_ADDRESS = "0x9008D19f58AAbD9eD0D60971565AA8510560ab41"
@@ -188,6 +191,7 @@ class SettlementSimulator:
                     trades.append(data)
             else:
                 logging.info(f'No order spec for {i} {o}')
+                raise ValueError(f'No order spec found for order {i}: {o}')
 
         gc = get_contract(GPV2_CONTRACT_ADDRESS, web3=web3)
 
@@ -228,5 +232,19 @@ class SettlementSimulator:
                 logger.exception('Unknown problem estimating gas')
         finally:
             return result
+
+
+async def async_simulate_solution(sol_json):
+    # async with websockets.connect("ws://localhost:8001/", ping_interval=10, ping_timeout=20) as websocket:
+    async with websockets.connect("wss://sim.plmsolver.link", ping_interval=10, ping_timeout=20) as websocket:
+        msg = SimulationRequest(SettledBatchAuction.from_json(sol_json), False).to_json()
+
+        await websocket.send(msg)
+        response = await websocket.recv()
+    return response
+
+def call_simulate_solution(sol_json):
+    return asyncio.run(async_simulate_solution(sol_json))
+
 
 
