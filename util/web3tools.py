@@ -113,7 +113,7 @@ def get_abi(contract_address, force_download=False):
     return abi
 
 
-def get_contract(address, force_download=False):
+def get_contract(address, force_download=False, web3=web3):
     abi = get_abi(address, force_download=force_download)
     return web3.eth.contract(
         address=Web3.toChecksumAddress(address),

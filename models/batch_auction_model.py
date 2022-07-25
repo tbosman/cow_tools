@@ -312,6 +312,10 @@ class Order(StrNumClass):
         return tag
 
 
+    def __hash__(self):
+        return hash(self.to_json())
+
+
 @dataclass_json
 @dataclass
 class BatchAuction(StrNumClass):
