@@ -5,12 +5,12 @@
 import json
 import asyncio
 import web3.exceptions
-from ..models.batch_auction_model import SettledBatchAuction, Order
-from ..settlement.datastructures import SimulationRequest
-from ..util.web3tools import get_contract, infuraweb3 as web3
+from cow_tools.models.batch_auction_model import SettledBatchAuction, Order
+from cow_tools.settlement.datastructures import SimulationRequest
+from cow_tools.util.web3tools import get_contract, infuraweb3 as web3
 from eth_abi import encode_abi, encode_single
-from ..util.defaultlogging import *
-from ..util.dbtools import get_postgres_engine
+from cow_tools.util.defaultlogging import *
+from cow_tools.util.dbtools import get_postgres_engine
 import pandas as pd
 from datetime import datetime
 from functools import lru_cache
@@ -234,17 +234,19 @@ class SettlementSimulator:
             return result
 
 
-async def async_simulate_solution(sol_json):
-    # async with websockets.connect("ws://localhost:8001/", ping_interval=10, ping_timeout=20) as websocket:
-    async with websockets.connect("wss://sim.plmsolver.link", ping_interval=10, ping_timeout=20) as websocket:
-        msg = SimulationRequest(SettledBatchAuction.from_json(sol_json), False).to_json()
 
-        await websocket.send(msg)
-        response = await websocket.recv()
-    return response
 
 def call_simulate_solution(sol_json):
+    async def async_simulate_solution(sol_json):
+        async with websockets.connect("wss://sim.plmsolver.link",
+                                      ping_interval=10,
+                                      ping_timeout=20) as websocket:
+            msg = SimulationRequest(SettledBatchAuction.from_json(sol_json),
+                                    False).to_json()
+
+            await websocket.send(msg)
+            response = await websocket.recv()
+        return response
+
     return asyncio.run(async_simulate_solution(sol_json))
-
-
 

@@ -1,14 +1,14 @@
 import asyncio
 import argparse
 
-from settlement.datastructures import SimulationResult, SimulationRequest
-from util.defaultlogging import *
+from cow_tools.settlement.datastructures import SimulationResult, SimulationRequest
+from cow_tools.util.defaultlogging import *
 
 from websockets import WebSocketServerProtocol
 import websockets.server
 from concurrent.futures import ThreadPoolExecutor
 
-from settlement.solution_simulator import SettlementSimulator
+from cow_tools.settlement.solution_simulator import SettlementSimulator
 
 logger = logging.getLogger(__name__)
 sockets = set()

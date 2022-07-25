@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Optional
 
 from dataclasses_json import dataclass_json
-from models.batch_auction_model import SettledBatchAuction
+from cow_tools.models.batch_auction_model import SettledBatchAuction
 
 
 @dataclass_json

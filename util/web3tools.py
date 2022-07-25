@@ -12,9 +12,9 @@ from typing import Any
 
 
 
-from models.batch_auction_model import ApprovalModel
+from cow_tools.models.batch_auction_model import ApprovalModel
 
-with open("config/apikeys.json", "r") as f:
+with open("cow_tools/config/apikeys.json", "r") as f:
     apikeys = json.load(f)
 
 INFURA_KEY = apikeys["infura"]
