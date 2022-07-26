@@ -260,17 +260,17 @@ def call_simulate_solution(sol_json):
 
     return asyncio.run(async_simulate_solution(sol_json))
 
-sol_json = open(
-    "/Users/tbosman/git_tree/1inch-solver/service/sol_9021.json", "r"
-).read()
-sol_json = open(
-    "/Users/tbosman/git_tree/1inch-solver/service/psol_3048.json", "r"
-).read()
-
-
-sim = SettlementSimulator()
-
-res = sim.simulate_gas(sol_json)
-logger.info(res)
-
+# sol_json = open(
+#     "/Users/tbosman/git_tree/1inch-solver/service/sol_9021.json", "r"
+# ).read()
+# sol_json = open(
+#     "/Users/tbosman/git_tree/1inch-solver/service/psol_3048.json", "r"
+# ).read()
+#
+#
+# sim = SettlementSimulator()
+#
+# res = sim.simulate_gas(sol_json)
+# logger.info(res)
+#
 
