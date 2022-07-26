@@ -29,6 +29,12 @@ logger = logging.getLogger(__name__)
 def _get_order_spec(order):
     # Auction_id is only used for caching purposes (gets called for every auction_id)
 
+    def token_equal_unwrap_eth(token):
+        if token == '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2':
+            return f"in ('{token}', '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee') "
+        else:
+            return f" = '{token}'"
+
     kind = "sell" if order.is_sell_order else "buy"
 
     sql = f"""
@@ -37,11 +43,11 @@ def _get_order_spec(order):
      from
     cow.orders
     where 
-    selltoken = '{order.sell_token}'
+    selltoken {token_equal_unwrap_eth(order.sell_token)}  --= '{order.sell_token}'
     and
     sellamount = '{order.sell_amount}'
     and 
-    buytoken = '{order.buy_token}'
+    buytoken {token_equal_unwrap_eth(order.buy_token)} --  = '{order.buy_token}'
     and 
     buyamount = '{order.buy_amount}'
     and 
