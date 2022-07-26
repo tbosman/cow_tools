@@ -7,7 +7,7 @@ import asyncio
 import web3.exceptions
 from cow_tools.models.batch_auction_model import SettledBatchAuction, Order
 from cow_tools.settlement.datastructures import SimulationRequest
-from cow_tools.util.web3tools import get_contract, infuraweb3 as web3
+from cow_tools.util.web3tools import get_contract, web3
 from eth_abi import encode_abi, encode_single
 from cow_tools.util.defaultlogging import *
 from cow_tools.util.dbtools import get_postgres_engine
@@ -149,6 +149,8 @@ class SettlementSimulator:
 
     def __init__(self):
         self.get_order_spec = lru_cache()(self.get_order_spec)
+        # This is not relevant anyway
+        self.gas_price = web3.eth.gas_price * 10
 
 
     def get_order_spec(self, order):
@@ -210,11 +212,10 @@ class SettlementSimulator:
 
     def simulate_gas(self, sol_json, estimate_block=False):
         result = {}
-        logger.info('WTFH')
         try:
             settle_func, tgt_block = self.get_settle_func_and_block(sol_json, estimate_block)
             sim_block = tgt_block if estimate_block else None
-            gas = settle_func.estimateGas({'gasPrice': web3.eth.gas_price * 2,
+            gas = settle_func.estimateGas({'gasPrice': self.gas_price,
                                            'from': '0x149d0f9282333681Ee41D30589824b2798E9fb47',
                                            'chainId' : 1,
                                            }, sim_block)
