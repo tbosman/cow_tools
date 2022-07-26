@@ -58,7 +58,7 @@ def _get_order_spec(order):
     if len(pdf):
         return pdf.to_dict(orient="records")[0]
     else:
-        {}
+        logger.debug(f'No order found for query: {sql}')
 
 
 def order_flags(order, order_spec):
