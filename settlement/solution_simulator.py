@@ -152,6 +152,7 @@ class SettlementSimulator:
         # This is not relevant anyway
         self.gas_price = web3.eth.gas_price * 10
 
+        self.block_number = web3.eth.block_number
 
     def get_order_spec(self, order):
         order_spec = _get_order_spec(order)
@@ -223,7 +224,7 @@ class SettlementSimulator:
         try:
             settle_func, tgt_block, call_data = self.get_settle_func_and_block(sol_json, estimate_block)
             result['call_data'] = call_data
-            sim_block = tgt_block if estimate_block else None
+            sim_block = tgt_block if estimate_block else self.block_number
             result['simulated_block_number'] = sim_block
             gas = settle_func.estimateGas({'gasPrice': self.gas_price,
                                            'from': '0x149d0f9282333681Ee41D30589824b2798E9fb47',
