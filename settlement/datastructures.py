@@ -14,6 +14,7 @@ class SimulationResult:
     error: Optional[str] = ''
     call_data: Optional[str] = None
     gas: Optional[int] = None
+    simulated_block_number: Optional[int] = None
 
 
 @dataclass_json
