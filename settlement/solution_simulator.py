@@ -208,12 +208,21 @@ class SettlementSimulator:
                                           list(clearingPrices), trades,
                                           interactions)
 
-        return settle_func, tgt_block
+        try:
+            call_data = gc.encodeABI('settle', args=[list(tokens),
+                                              list(clearingPrices), trades,
+                                              interactions])
+            logger.info(f'Calldata: {call_data}')
+        except:
+            logging.exception('Encoding calldata failed')
+
+        return settle_func, tgt_block, call_data
 
     def simulate_gas(self, sol_json, estimate_block=False):
         result = {}
         try:
-            settle_func, tgt_block = self.get_settle_func_and_block(sol_json, estimate_block)
+            settle_func, tgt_block, call_data = self.get_settle_func_and_block(sol_json, estimate_block)
+            result['call_data'] = call_data
             sim_block = tgt_block if estimate_block else None
             gas = settle_func.estimateGas({'gasPrice': self.gas_price,
                                            'from': '0x149d0f9282333681Ee41D30589824b2798E9fb47',
@@ -250,4 +259,18 @@ def call_simulate_solution(sol_json):
         return response
 
     return asyncio.run(async_simulate_solution(sol_json))
+
+sol_json = open(
+    "/Users/tbosman/git_tree/1inch-solver/service/sol_9021.json", "r"
+).read()
+sol_json = open(
+    "/Users/tbosman/git_tree/1inch-solver/service/psol_3048.json", "r"
+).read()
+
+
+sim = SettlementSimulator()
+
+res = sim.simulate_gas(sol_json)
+logger.info(res)
+
 

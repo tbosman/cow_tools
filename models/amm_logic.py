@@ -1,10 +1,10 @@
-from models.batch_auction_model import AMMModel, BatchAuction, Order
+from cow_tools.models.batch_auction_model import AMMModel, BatchAuction, Order
 
 # from models.WeightedMath import WeightedMath
 from decimal import *
 from typing import List
 import math
-from models.balancer_util import *
+from cow_tools.models.balancer_util import *
 import functools
 import operator
 import scipy.optimize

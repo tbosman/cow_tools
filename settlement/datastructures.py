@@ -12,6 +12,7 @@ class SimulationResult:
     passed: bool
     reason: Optional[str] = ''
     error: Optional[str] = ''
+    call_data: Optional[str] = None
     gas: Optional[int] = None
 
 

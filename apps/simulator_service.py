@@ -103,7 +103,7 @@ async def main(port=8001):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser("simple_example")
+    parser = argparse.ArgumentParser("simulator")
     parser.add_argument(
         "--port", help="Port to run on.", type=int, default=8001
     )
