@@ -139,7 +139,7 @@ def order_to_data(order, tokens, order_spec):
         order.exec_sell_amount if order.is_sell_order else order.exec_buy_amount
     )
     executedAmount = (
-        order_spec['execsellamount'] if order.is_sell_order else order_spec[ 'execbuyamount' ]
+        order_spec['executedsellamount'] if order.is_sell_order else order_spec[ 'executedbuyamount' ]
     )
     signature =  order_spec["owner"] if order_spec['signingscheme'] == 'presign' else order_spec["signature"]
     return [
