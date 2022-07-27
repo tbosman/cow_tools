@@ -122,8 +122,8 @@ class ExecutionPlanCoordinatesModel:
 @dataclass
 class InteractionData(StrNumClass):
     target: str
-    value: int
     call_data: str
+    value: Optional[int] = None
     inputs: Optional[List[TokenAmount]] = None
     outputs: Optional[List[TokenAmount]] = None
     exec_plan: Optional[Union[ExecutionPlanCoordinatesModel, InternalExecutionPlan]] = None
