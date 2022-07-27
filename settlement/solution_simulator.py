@@ -216,9 +216,16 @@ class SettlementSimulator:
 
         gc = get_contract(GPV2_CONTRACT_ADDRESS, web3=web3)
 
+        def exec_key(interaction):
+            try:
+                exec_plan = interaction.exec_plan
+                return (exec_plan.position, exec_plan.sequence)
+            except:
+                return (-1, -1)
+
         schedule_interactions = sorted([interaction for interaction in settled_batch.interaction_data
                                         if interaction.exec_plan != "internal"],
-                                       key=lambda x: x.exec_plan )
+                                       key=exec_key)
 
 
         main_interactions = [
