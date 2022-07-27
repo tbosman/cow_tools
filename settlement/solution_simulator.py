@@ -217,7 +217,7 @@ class SettlementSimulator:
         gc = get_contract(GPV2_CONTRACT_ADDRESS, web3=web3)
 
         schedule_interactions = sorted([interaction for interaction in settled_batch.interaction_data
-                                        if interaction.exec_plan != InternalExecutionPlan.INTERNAL],
+                                        if interaction.exec_plan != "internal"],
                                        key=lambda x: (x.exec_plan.position, x.exec_plan.sequence) if x else (-1, -1) )
 
         main_interactions = [
