@@ -5,7 +5,8 @@
 import json
 import asyncio
 import web3.exceptions
-from cow_tools.models.batch_auction_model import SettledBatchAuction, Order
+from cow_tools.models.batch_auction_model import SettledBatchAuction, Order, \
+    InternalExecutionPlan
 from cow_tools.settlement.datastructures import SimulationRequest
 from cow_tools.util.web3tools import get_contract, web3
 from eth_abi import encode_abi, encode_single
@@ -215,9 +216,13 @@ class SettlementSimulator:
 
         gc = get_contract(GPV2_CONTRACT_ADDRESS, web3=web3)
 
+        schedule_interactions = sorted([interaction for interaction in settled_batch.interaction_data
+                                        if interaction.exec_plan != InternalExecutionPlan.INTERNAL],
+                                       key=lambda x: (x.exec_plan.position, x.exec_plan.sequence) )
+
         main_interactions = [
             [web3.toChecksumAddress(i.target), i.value, i.call_data]
-            for i in settled_batch.interaction_data]
+            for i in schedule_interactions]
         interactions = [[], main_interactions, []]
 
         logger.info(f'tgt block: {tgt_block}')
