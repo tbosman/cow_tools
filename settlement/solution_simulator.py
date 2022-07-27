@@ -218,7 +218,7 @@ class SettlementSimulator:
 
         schedule_interactions = sorted([interaction for interaction in settled_batch.interaction_data
                                         if interaction.exec_plan != InternalExecutionPlan.INTERNAL],
-                                       key=lambda x: (x.exec_plan.position, x.exec_plan.sequence) )
+                                       key=lambda x: (x.exec_plan.position, x.exec_plan.sequence) if x else (-1, -1) )
 
         main_interactions = [
             [web3.toChecksumAddress(i.target), i.value, i.call_data]
