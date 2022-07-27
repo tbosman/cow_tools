@@ -84,9 +84,17 @@ def order_flags(order, order_spec):
     # The order fill kind is encoded as 1 bit in position 1.
     result |= (order.allow_partial_fill) << 1
     # The order sell token balance is encoded as 2 bits in position 2.
-    result |= (0) << 2  # only support erc for now
+
+    sell_token_balance = {
+        "erc20": 0,
+        "external": 2,
+        "internal": 3,}
+    result |= sell_token_balance[order_spec["selltokenbalance"]]  << 2  # only support erc for now
     # The order buy token balance is encoded as 1 bit in position 4.
-    result |= (0) << 4  # only support erc for now
+    buy_token_balance = {
+        "erc20": 0,
+        "internal": 1,}
+    result |= buy_token_balance[order_spec["buytokenbalance"]] << 4  # only support erc for now
     # The signing scheme is encoded as a 2 bits in position 5.
     sign_flag = {
         "eip712": 0,
