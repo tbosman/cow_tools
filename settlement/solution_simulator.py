@@ -126,9 +126,8 @@ def order_to_data(order, tokens, order_spec):
         bytes signature;
     }"""
 
-    tokens = [token.lower() for token in tokens]
-    sellTokenIndex = tokens.index(order.sell_token)
-    buyTokenIndex = tokens.index(order.buy_token)
+    sellTokenIndex = tokens.index(order_spec['selltoken'])
+    buyTokenIndex = tokens.index(order_spec['buytoken'])
     receiver = web3.toChecksumAddress(order_spec["receiver"])
     sellAmount = order.sell_amount
     buyAmount = order.buy_amount
@@ -182,13 +181,32 @@ class SettlementSimulator:
         settled_batch: SettledBatchAuction
 
         # replace exec_amounts
-        prices = settled_batch.prices
-        tokens, clearingPrices = zip(*prices.items())
-        tokens = [web3.toChecksumAddress(token) for token in tokens]
-
         tgt_block = None
         tgt_timestamp = int(time.time())
         trades = []
+        order_spec_dict = {}
+
+        prices = settled_batch.prices
+        tokens = []
+        clearingPrices = []
+        ETH = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+        WETH = '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2'
+        for i, o in settled_batch.orders.items():
+            order_spec = self.get_order_spec(o)
+            order_spec_dict[i] = order_spec
+            buy_token = order_spec['buytoken'].lower()
+            sell_token = order_spec['selltoken'].lower()
+            for check_token in [buy_token, sell_token]:
+                if check_token not in tokens:
+                    tokens.append(check_token)
+                    if check_token == ETH:
+                        clearingPrices.append(prices[WETH])
+                    else:
+                        clearingPrices.append(prices[check_token])
+
+        tokens_checksum = [web3.toChecksumAddress(token) for token in tokens]
+
+
         for i, o in settled_batch.orders.items():
             logger.info(o)
             sell_price = prices[o.sell_token]
@@ -203,8 +221,8 @@ class SettlementSimulator:
                         o.exec_buy_amount = o.buy_amount
                     o.exec_sell_amount = o.exec_buy_amount * buy_price / sell_price
 
-            order_spec = self.get_order_spec(o)
-            if order_spec:
+            if i in order_spec_dict:
+                order_spec = order_spec_dict[i]
                 data = order_to_data(o, tokens, order_spec)
                 tgt_block = order_spec['block']
                 tgt_timestamp = min(order_spec['validto'], tgt_timestamp)
@@ -235,7 +253,7 @@ class SettlementSimulator:
 
         logger.info(f'tgt block: {tgt_block}')
 
-        settle_func = gc.functions.settle(list(tokens),
+        settle_func = gc.functions.settle(list(tokens_checksum),
                                           list(clearingPrices), trades,
                                           interactions)
 
