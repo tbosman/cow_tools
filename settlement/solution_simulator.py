@@ -15,6 +15,7 @@ import pandas as pd
 from datetime import datetime
 from functools import lru_cache
 import websockets
+import time
 
 
 GPV2_CONTRACT_ADDRESS = "0x9008D19f58AAbD9eD0D60971565AA8510560ab41"
@@ -185,6 +186,7 @@ class SettlementSimulator:
         tokens = [web3.toChecksumAddress(token) for token in tokens]
 
         tgt_block = None
+        tgt_timestamp = int(time.time())
         trades = []
         for i, o in settled_batch.orders.items():
             logger.info(o)
@@ -204,6 +206,7 @@ class SettlementSimulator:
             if order_spec:
                 data = order_to_data(o, tokens, order_spec)
                 tgt_block = order_spec['block']
+                tgt_timestamp = min(order_spec['validto'], tgt_timestamp)
                 if data:
                     trades.append(data)
             else:
@@ -238,7 +241,7 @@ class SettlementSimulator:
         try:
             settle_func, tgt_block, call_data = self.get_settle_func_and_block(sol_json, estimate_block)
             result['call_data'] = call_data
-            sim_block = tgt_block if estimate_block-1 else self.block_number
+            sim_block = tgt_block-1 if estimate_block else self.block_number
             result['simulated_block_number'] = sim_block
             gas = settle_func.estimateGas({'gasPrice': self.gas_price,
                                            'from': '0x149d0f9282333681Ee41D30589824b2798E9fb47',
