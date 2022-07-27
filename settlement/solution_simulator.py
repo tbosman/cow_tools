@@ -258,7 +258,7 @@ class SettlementSimulator:
                                           interactions)
 
         try:
-            call_data = gc.encodeABI('settle', args=[list(tokens),
+            call_data = gc.encodeABI('settle', args=[list(tokens_checksum),
                                               list(clearingPrices), trades,
                                               interactions])
             logger.info(f'Calldata: {call_data}')
