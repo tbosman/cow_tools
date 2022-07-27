@@ -149,6 +149,8 @@ class InteractionData(StrNumClass):
                     ta.strint_to_str()
 
 
+
+
 class Execution:
     sell_token: str
     buy_token: str
