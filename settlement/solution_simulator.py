@@ -58,9 +58,8 @@ def _get_order_spec(order):
     
     order by timestamp desc
      limit 1
-     
-    
     """
+    logger.debug('Running query :%s', sql)
 
     pdf = pd.read_sql_query(sql, engine)
     if len(pdf):
@@ -137,9 +136,6 @@ def order_to_data(order, tokens, order_spec):
     flags = order_flags(order, order_spec)
     executedAmount = (
         order.exec_sell_amount if order.is_sell_order else order.exec_buy_amount
-    )
-    executedAmount = int(
-        order_spec['executedsellamount'] if order.is_sell_order else order_spec[ 'executedbuyamount' ]
     )
     signature =  order_spec["owner"] if order_spec['signingscheme'] == 'presign' else order_spec["signature"]
     return [

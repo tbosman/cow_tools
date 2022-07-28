@@ -433,3 +433,19 @@ class SettledBatchAuction(StrNumClass):
             appr.strint_to_num()
         for t in self.prices:
             self.prices[t] = int(self.prices[t])
+
+
+    @staticmethod
+    def empty():
+        return SettledBatchAuction.from_dict(
+            SettledBatchAuction(
+                orders={},
+                amms={},
+                prices={
+                },
+                ref_token='0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+                interaction_data=[],
+            ).to_dict()
+        )
+
+
